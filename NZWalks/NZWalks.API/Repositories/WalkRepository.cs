@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using NZWalks.API.Data;
 using NZWalks.API.Models.Domain;
 
@@ -13,6 +14,24 @@ namespace NZWalks.API.Repositories
             this.nZWalksDBContext = nZWalksDBContext;
         }
 
+        public async Task<IEnumerable<Walk>> GetAllAsync()
+        {
+            return await 
+                nZWalksDBContext.Walks
+                .Include(x => x.Region)
+                .Include(x => x.WalkDifficulty)
+                .ToListAsync();
+        }
+
+        public async Task<Walk> GetAsync(Guid id)
+        {
+            return await 
+                nZWalksDBContext.Walks
+                .Include(x => x.Region)
+                .Include(x => x.WalkDifficulty)
+                .FirstOrDefaultAsync(x => x.Id == id);
+        }
+
         public async Task<Walk> AddAsync(Walk walk)
         {
             walk.Id = Guid.NewGuid();
@@ -23,19 +42,20 @@ namespace NZWalks.API.Repositories
             return walk;
         }
 
-        public Task<Walk> DeleteAsync(Guid id)
+        public async Task<Walk> DeleteAsync(Guid id)
         {
-            throw new NotImplementedException();
-        }
+            var walk = await nZWalksDBContext.Walks.FirstOrDefaultAsync(x => x.Id == id);
 
-        public async Task<IEnumerable<Walk>> GetAllAsync()
-        {
-            return await nZWalksDBContext.Walks.ToListAsync();
-        }
+            if (walk == null)
+            {
+                return null;
+            }
 
-        public async Task<Walk> GetAsync(Guid id)
-        {
-            return await nZWalksDBContext.Walks.FirstOrDefaultAsync(x => x.Id == id);
+            // Delete the walk
+            nZWalksDBContext.Remove(walk);
+            await nZWalksDBContext.SaveChangesAsync();
+
+            return walk;
         }
 
         public async Task<Walk> UpdateAsync(Guid id, Walk walk)

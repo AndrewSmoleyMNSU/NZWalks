@@ -45,6 +45,35 @@ namespace NZWalks.API.Controllers
             return Ok(walkDTO);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> AddWalkAsync(AddWalkRequest addWalkRequest)
+        {
+            // Set Domain model
+            var walk = new Models.Domain.Walk()
+            {
+                Name = addWalkRequest.Name,
+                Length = addWalkRequest.Length,
+                WalkDifficultyId = addWalkRequest.WalkDifficultyId,
+                RegionId = addWalkRequest.RegionId
+            };
+
+            // Pass details to Repository
+            walk = await walkRepository.AddAsync(walk);
+
+            // Convert back to DTO
+            var walkDTO = new Models.DTO.Walk()
+            {
+                Id = walk.Id,
+                Name = walk.Name,
+                Length = walk.Length,
+                WalkDifficultyId = walk.WalkDifficultyId,
+                RegionId = walk.RegionId
+            };
+
+            return CreatedAtAction(nameof(GetWalkAsync), new { id = walkDTO.Id }, walkDTO);
+
+        }
+
         [HttpPut]
         [Route("{id:guid}")]
         public async Task<IActionResult> UpdateWalkAsync([FromRoute] Guid id, [FromBody] UpdateWalkRequest updateWalkRequest)
@@ -79,5 +108,36 @@ namespace NZWalks.API.Controllers
             // Return Ok response
             return Ok(walkDTO);
         }
+
+        [HttpDelete]
+        [Route("{id:guid}")]
+        public async Task<IActionResult> DeleteWalkAsync(Guid id)
+        {
+            // Get walk from DB
+            var walk = await walkRepository.DeleteAsync(id);
+
+            // if null return NotFound
+            if (walk == null)
+            {
+                return NotFound();
+            }
+
+            // Convert response to DTO
+            var walkDTO = new Models.DTO.Walk
+            {
+                Id = walk.Id,
+                Name = walk.Name,
+                Length = walk.Length,
+                WalkDifficultyId = walk.WalkDifficultyId,
+                RegionId = walk.RegionId
+            };
+
+            // Return Ok response
+            return Ok(walkDTO);
+
+
+
+        }
+
     }
 }
