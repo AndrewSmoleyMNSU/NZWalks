@@ -22,6 +22,10 @@ namespace NZWalks.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllWalkDiffultyAsync()
         {
+            // below is shorthand for what was done below but doesn't use AutoMapper or the DTO
+            // better to do what is uncommented below
+            //return Ok(await walkDifficultyRepository.GetAllAsync());
+
             var walkDifficulty = await walkDifficultyRepository.GetAllAsync();
             var walkDifficultyDTO = mapper.Map<List<Models.DTO.WalkDifficulty>>(walkDifficulty);
 
@@ -46,7 +50,7 @@ namespace NZWalks.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddWalkDifficultyAsyn(AddWalkDifficultyRequest addWalkDifficultyRequest)
+        public async Task<IActionResult> AddWalkDifficultyAsyn(Models.DTO.AddWalkDifficultyRequest addWalkDifficultyRequest)
         {
             // Set Domain Model
             var wd = new Models.Domain.WalkDifficulty()
