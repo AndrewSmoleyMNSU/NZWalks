@@ -1,3 +1,4 @@
+using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 using NZWalks.API.Data;
 using NZWalks.API.Repositories;
@@ -11,6 +12,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddFluentValidation(options => options.RegisterValidatorsFromAssemblyContaining<Program>());
+    
 builder.Services.AddDbContext<NZWalksDBContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("NZWalks"));

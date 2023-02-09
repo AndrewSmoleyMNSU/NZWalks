@@ -51,7 +51,7 @@ namespace NZWalks.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddWalkAsync(AddWalkRequest addWalkRequest)
+        public async Task<IActionResult> AddWalkAsync(Models.DTO.AddWalkRequest addWalkRequest)
         {
             // Validate Request
             if (!(await ValidateAddWalkASync(addWalkRequest)))
@@ -94,6 +94,7 @@ namespace NZWalks.API.Controllers
             {
                 return BadRequest(ModelState);
             }
+
             var walk = new Models.Domain.Walk
             {
                 Name = updateWalkRequest.Name,
@@ -159,21 +160,21 @@ namespace NZWalks.API.Controllers
 
         private async Task<bool> ValidateAddWalkASync(Models.DTO.AddWalkRequest addWalkRequest)
         {
-            if (addWalkRequest == null)
-            {
-                ModelState.AddModelError(nameof(addWalkRequest), $"Please add walk data.");
-                return false;
-            }
+            //if (addWalkRequest == null)
+            //{
+            //    ModelState.AddModelError(nameof(addWalkRequest), $"Please add walk data.");
+            //    return false;
+            //}
 
-            if (!string.IsNullOrWhiteSpace(addWalkRequest.Name))
-            {
-                ModelState.AddModelError(nameof(addWalkRequest.Name), $"{nameof(addWalkRequest.Name)} must not be empty.");
-            }
+            //if (!string.IsNullOrWhiteSpace(addWalkRequest.Name))
+            //{
+            //    ModelState.AddModelError(nameof(addWalkRequest.Name), $"{nameof(addWalkRequest.Name)} must not be empty.");
+            //}
 
-            if (addWalkRequest.Length <= 0)
-            {
-                ModelState.AddModelError(nameof(addWalkRequest.Length), $"{nameof(addWalkRequest.Length)} must be greater than 0.");
-            }
+            //if (addWalkRequest.Length <= 0)
+            //{
+            //    ModelState.AddModelError(nameof(addWalkRequest.Length), $"{nameof(addWalkRequest.Length)} must be greater than 0.");
+            //}
 
             var region = await regionRepository.GetAsync(addWalkRequest.RegionId);
             if (region == null)
@@ -187,26 +188,31 @@ namespace NZWalks.API.Controllers
                 ModelState.AddModelError(nameof(addWalkRequest.WalkDifficultyId), $"{nameof(addWalkRequest.WalkDifficultyId)} is invalid.");
             }
 
+            if (ModelState.ErrorCount > 0)
+            {
+                return false;
+            }
+
             return true;
         }
 
         private async Task<bool> ValidateUpdateWalkASync(Models.DTO.UpdateWalkRequest updateWalkRequest)
         {
-            if (updateWalkRequest == null)
-            {
-                ModelState.AddModelError(nameof(updateWalkRequest), $"Please add walk data.");
-                return false;
-            }
+            //if (updateWalkRequest == null)
+            //{
+            //    ModelState.AddModelError(nameof(updateWalkRequest), $"Please add walk data.");
+            //    return false;
+            //}
 
-            if (!string.IsNullOrWhiteSpace(updateWalkRequest.Name))
-            {
-                ModelState.AddModelError(nameof(updateWalkRequest.Name), $"{nameof(updateWalkRequest.Name)} must not be empty.");
-            }
+            //if (!string.IsNullOrWhiteSpace(updateWalkRequest.Name))
+            //{
+            //    ModelState.AddModelError(nameof(updateWalkRequest.Name), $"{nameof(updateWalkRequest.Name)} must not be empty.");
+            //}
 
-            if (updateWalkRequest.Length <= 0)
-            {
-                ModelState.AddModelError(nameof(updateWalkRequest.Length), $"{nameof(updateWalkRequest.Length)} must be greater than 0.");
-            }
+            //if (updateWalkRequest.Length <= 0)
+            //{
+            //    ModelState.AddModelError(nameof(updateWalkRequest.Length), $"{nameof(updateWalkRequest.Length)} must be greater than 0.");
+            //}
 
             var region = await regionRepository.GetAsync(updateWalkRequest.RegionId);
             if (region == null)
